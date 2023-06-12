@@ -6,7 +6,7 @@ const InfoCards = ({ bannerCard }) => {
     return (
         <div>
             <div  className={`card card-side h-[190px] items-center w-[460px] ${bgClass}`}>
-                <figure class="px-10 ">
+                <figure className="px-10 ">
                     <img src={icon} alt="Shoes" className="rounded-xl" />
                 </figure>
                 <div className="card-body text-white">
