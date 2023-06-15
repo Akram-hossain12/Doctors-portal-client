@@ -1,16 +1,37 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from "react-hook-form";
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthProvider/AuthProvider';
+import { toast } from 'react-hot-toast';
 
 
 
 
 const Login = () => {
    
-    const { register,formState: { errors }, handleSubmit,reset } = useForm();
+    const { register, handleSubmit,reset } = useForm();
+    const {LoginUser}=useContext(AuthContext);
+    const [loginError,setLoginError]=useState('');
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const from = location.state?.from?.pathname || '/';
+
     const hendalLogin = data =>{
-            console.log(data)
-            reset()
+              setLoginError('')
+             LoginUser(data.email,data.password)
+             .then(res=>{
+                const user =res.user;
+                toast("Login Successfully")
+                console.log(user)
+                navigate(from, {replace: true});
+                reset()
+             })
+             .catch(err=>{
+                setLoginError(err.message)
+                console.error(err)
+            })
+            
     }
     
    
@@ -32,7 +53,7 @@ const Login = () => {
                             <span className="label-text font-bold">Password</span>
                         </label>
                         <input {...register("password",{required:'password must be 8 carecter'})} type="password" placeholder="Type here" className="input input-bordered w-full " />
-                        {errors.password && <p className='text-red-500 mx-1'>{errors.password?.message}</p>}
+                        {loginError && <p className='text-red-500 mx-1'>{loginError}</p>}
                         <label className="label">
                             <span className="label-text">Forgate Password?</span>
                         </label>
