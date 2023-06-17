@@ -6,35 +6,49 @@ import { AuthContext } from '../../context/AuthProvider/AuthProvider';
 import { toast } from 'react-hot-toast';
 
 const Sginup = () => {
-    
-    const { register,formState: { errors }, handleSubmit,reset } = useForm();
-   const {createUser,userUpdate}=useContext(AuthContext)
-   const location = useLocation();
+
+    const { register, formState: { errors }, handleSubmit, reset } = useForm();
+    const { createUser, updateUser } = useContext(AuthContext)
+
+    const location = useLocation();
     const navigate = useNavigate();
 
     const from = location.state?.from?.pathname || '/';
-    const hendalSginUp = data =>{
-        createUser(data.email,data.password)
-        .then(result=>{
-            const user = result.user;
-          
-            toast.success('Sgin up successfully,Thanks to sginUp')
-            const userInfo ={
-                displayName:data.name
-            }
-            console.log(userInfo)
-            userUpdate(userInfo)
-            .then(()=>{})
-            .catch(err=>console.error(err))
-            console.log(user)
-            reset()
-            navigate(from, {replace: true});
+    const hendalSginUp = data => {
+        createUser(data.email, data.password)
+            .then(result => {
+                const user = result.user;
+                console.log(user)
+                toast.success('Sgin up successfully,Thanks to sginUp')
+                const userInfo = {
+                    displayName: data.name,
+                }
+                updateUser(userInfo)
+                    .then((res) => {
+                        userSaveDb(data.email,data.name)
+                    })
+                    .catch(err => console.error(err))
 
-        })
-        .catch(err=>console.error(err))
-         
-     
+            })
+            .catch(err => console.error(err))
     }
+const userSaveDb=(name,email)=>{
+    const users = {name,email}
+    console.log(users)
+    fetch('http://localhost:5001/users',{
+        method:'POST',
+        headers:{'content-type': 'application/json'},
+        body: JSON.stringify(users) 
+    })
+    .then(res=>{
+        res.json()
+    })
+    .then(data=>{
+        console.log(data)
+        navigate('/');
+        reset()
+    })
+}
 
     return (
         <div className=' h-[600px] flex items-center justify-center'>
@@ -42,7 +56,7 @@ const Sginup = () => {
                 <h1 className='text-2xl text-center'>SginUp</h1>
                 <form onSubmit={handleSubmit(hendalSginUp)}>
 
-                <div className="form-control w-full ">
+                    <div className="form-control w-full ">
                         <label className="label">
                             <span className="label-text font-bold">Name</span>
                         </label>
@@ -53,7 +67,7 @@ const Sginup = () => {
                         <label className="label">
                             <span className="label-text font-bold">Email</span>
                         </label>
-                        <input {...register("email",{ required: 'Please ,enter email!' })} type="email" placeholder="Type here" className="input input-bordered w-full" />
+                        <input {...register("email", { required: 'Please ,enter email!' })} type="email" placeholder="Type here" className="input input-bordered w-full" />
                         {errors.email && <p className='text-red-500'>{errors.email?.message}</p>}
                     </div>
 
@@ -61,7 +75,7 @@ const Sginup = () => {
                         <label className="label">
                             <span className="label-text font-bold">Password</span>
                         </label>
-                        <input {...register("password",{ required:'pasword must 8 or long', minLength: 8 })} type="password" placeholder="Type here" className="input input-bordered w-full " />
+                        <input {...register("password", { required: 'pasword must 8 or long', minLength: 8 })} type="password" placeholder="Type here" className="input input-bordered w-full " />
                         {errors.password && <p className='text-red-500 mx-1'>{errors.password?.message}</p>}
                         <label className="label">
                             <span className="label-text">Forgate Password?</span>

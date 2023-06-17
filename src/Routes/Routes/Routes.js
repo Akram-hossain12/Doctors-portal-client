@@ -6,6 +6,8 @@ import Login from "../../Pages/Login/Login";
 import Sginup from "../../Pages/SginUp/Sginup";
 import PrivateRoute from "../PrivateRoute/PrivateRoute";
 import Dashbord from "../../Pages/Dashbord/Dashbord/Dashbord";
+import DashbordLayout from "../../Layout/DashbordLayout";
+import MyAppointment from "../../Pages/Dashbord/MyAppointment/MyAppointment";
 
 export const router =createBrowserRouter([
     {
@@ -34,6 +36,13 @@ export const router =createBrowserRouter([
     },
     {
         path:'/dashbord',
-        element:<PrivateRoute><Dashbord></Dashbord></PrivateRoute>
+        element:<DashbordLayout></DashbordLayout>,
+        children:[
+            {
+                path:'/dashbord',
+                element:<MyAppointment></MyAppointment>
+
+            }
+        ]
     }
 ])

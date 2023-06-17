@@ -2,8 +2,8 @@ import React from 'react';
 
 
 const AppoinmentOption = ({option,setTreatment }) => {
-    console.log(option)
-    const { name, slots } = option
+ 
+    const { name, slots } = option;
     return (
         <div>
             <div className="card bg-base-100 shadow-xl">
